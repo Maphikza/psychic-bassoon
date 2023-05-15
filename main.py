@@ -8,7 +8,7 @@ from PIL import Image
 
 app = Flask(__name__)
 
-camera_url = 'http://192.168.3.130:8080/video'  # Replace with your IP camera URL
+camera_url = 'url'  # Replace with your IP camera URL
 
 # Load the MobileNet-SSD model
 prototxt = os.path.join(os.path.dirname(__file__), 'deploy.prototxt.txt')
@@ -76,32 +76,23 @@ def detect_motion(frame, prev_frame, min_area=500):
 
 def generate_frames():
     global count
-    # resp = requests.get(camera_url, stream=True).raw
-    # img = np.asarray(bytearray(resp.read()), dtype="uint8")
-    # img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
-    # cap = cv2.VideoCapture(camera_url)
     prev_frame = None
 
     while True:
         cap = cv2.VideoCapture(camera_url)
-        # resp = requests.get(camera_url, stream=True).raw
-        # img = np.asarray(bytearray(resp.read()), dtype="uint8")
-        # img = cv2.imdecode(img, cv2.IMREAD_GRAYSCALE)
         ret, frame = cap.read()
         if not ret:
             break
-        # if count == 1:
-        #     dog_detected, frame = detect_dog(frame)
-        # # movement, frame = detect_motion(frame, prev_frame)
-        # # if movement:
-        # #     print("There is movement.")
-        # dog_detected, frame = detect_dog(frame)
-        # if dog_detected:
-        #     print("Dog detected!")
-        #     if count == 1:
-        #         img = Image.fromarray(frame)
-        #         img.show()
-        #         count -= 1
+        if count == 1:
+            dog_detected, frame = detect_dog(frame)
+
+        dog_detected, frame = detect_dog(frame)
+        if dog_detected:
+            print("Dog detected!")
+            if count == 1:
+                img = Image.fromarray(frame)
+                img.show()
+                count -= 1
 
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
